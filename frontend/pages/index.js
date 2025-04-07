@@ -1,14 +1,168 @@
 import { useRouter } from "next/router";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 export default function Home() {
   const router = useRouter();
-  
+
+  // Login form validation
+  const loginSchema = Yup.object({
+    email: Yup.string().email("Invalid email").required("Required"),
+    password: Yup.string().required("Required"),
+  });
+
+  // Register form validation
+  const registerSchema = Yup.object({
+    fullName: Yup.string().required("Full name is required"),
+    email: Yup.string().email("Invalid email").required("Required"),
+    password: Yup.string().min(6, "Min 6 characters").required("Required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm your password"),
+  });
+
+  // On login submit
+  const handleLogin = (values, { setSubmitting }) => {
+    console.log("Login Data:", values);
+    // redirect only after validation passes
+    setTimeout(() => {
+      router.push("/dashboard");
+      setSubmitting(false);
+    }, 500);
+  };
+
+  // On register submit
+  const handleRegister = (values, { setSubmitting }) => {
+    console.log("Register Data:", values);
+    setTimeout(() => {
+      router.push("/dashboard");
+      setSubmitting(false);
+    }, 500);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen space-y-4">
-      <h1 className="text-3xl font-bold">Money Manager</h1>
-      <p>Track your expenses and manage your finances efficiently.</p>
-      <Button onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 p-4">
+      <Card className="w-full max-w-md shadow-2xl rounded-2xl border-none">
+        <CardContent className="p-8">
+          <h1 className="text-3xl font-extrabold text-center text-indigo-600 mb-2">💰 Money Manager</h1>
+          <p className="text-sm text-center text-gray-500 mb-6">Track and control your spending smartly.</p>
+
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid grid-cols-2 bg-gray-100 p-1 rounded mb-6">
+              <TabsTrigger
+                value="login"
+                className="bg-transparent text-black data-[state=active]:bg-indigo-500 data-[state=active]:text-black rounded"
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger
+                value="register"
+                className="bg-transparent text-black data-[state=active]:bg-indigo-500 data-[state=active]:text-black rounded"
+              >
+                Register
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Login Form */}
+            <TabsContent value="login">
+              <Formik
+                initialValues={{ email: "", password: "" }}
+                validationSchema={loginSchema}
+                onSubmit={handleLogin}
+              >
+                {({ isSubmitting }) => (
+                  <Form className="space-y-4">
+                    <div>
+                      <Field
+                        as={Input}
+                        name="email"
+                        type="email"
+                        placeholder="Email"
+                        className="focus:ring-indigo-400"
+                      />
+                      <ErrorMessage name="email" component="div" className="text-red-500 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Field
+                        as={Input}
+                        name="password"
+                        type="password"
+                        placeholder="Password"
+                        className="focus:ring-indigo-400"
+                      />
+                      <ErrorMessage name="password" component="div" className="text-red-500 text-xs mt-1" />
+                    </div>
+                    <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={isSubmitting}>
+                      Login
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </TabsContent>
+
+            {/* Register Form */}
+            <TabsContent value="register">
+              <Formik
+                initialValues={{ fullName: "", email: "", password: "", confirmPassword: "" }}
+                validationSchema={registerSchema}
+                onSubmit={handleRegister}
+              >
+                {({ isSubmitting }) => (
+                  <Form className="space-y-4">
+                    <div>
+                      <Field
+                        as={Input}
+                        name="fullName"
+                        type="text"
+                        placeholder="Full Name"
+                        className="focus:ring-indigo-400"
+                      />
+                      <ErrorMessage name="fullName" component="div" className="text-red-500 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Field
+                        as={Input}
+                        name="email"
+                        type="email"
+                        placeholder="Email"
+                        className="focus:ring-indigo-400"
+                      />
+                      <ErrorMessage name="email" component="div" className="text-red-500 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Field
+                        as={Input}
+                        name="password"
+                        type="password"
+                        placeholder="Password"
+                        className="focus:ring-indigo-400"
+                      />
+                      <ErrorMessage name="password" component="div" className="text-red-500 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Field
+                        as={Input}
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm Password"
+                        className="focus:ring-indigo-400"
+                      />
+                      <ErrorMessage name="confirmPassword" component="div" className="text-red-500 text-xs mt-1" />
+                    </div>
+                    <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={isSubmitting}>
+                      Register
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 }
