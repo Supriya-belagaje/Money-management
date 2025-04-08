@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { loginUser, registerUser } from "@/service/auth";
+import { toast } from "react-toastify";
+
 
 export default function Home() {
   const router = useRouter();
@@ -26,19 +29,32 @@ const registerSchema = Yup.object({
       .required("Confirm your password"),
   });
 
-  // On login submit
-  const handleLogin = (values, { setSubmitting }) => {
-    console.log("Login Data:", values);
-    router.push("/dashboard");
-    setSubmitting(false);
+  const handleRegister = async (values, { setSubmitting, resetForm }) => {
+    try {
+      const data = await registerUser(values);
+      toast.success(data.message || "Registered successfully!");
+      resetForm();
+      router.push("/dashboard");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Registration failed!");
+    } finally {
+      setSubmitting(false);
+    }
   };
-
-  // On register submit
-  const handleRegister = (values, { setSubmitting }) => {
-    console.log("Register Data:", values);
-    router.push("/dashboard");
-    setSubmitting(false);
+  
+  const handleLogin = async (values, { setSubmitting }) => {
+    try {
+      const data = await loginUser(values);
+      toast.success(data.message || "Logged in successfully!");
+      router.push("/dashboard");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Login failed!");
+    } finally {
+      setSubmitting(false);
+    }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 p-4">
