@@ -7,12 +7,16 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // JSON parser
+app.use(express.json());
+// app.get("/",(req,res)=>{
+//  return {"messsage":"Server is up and running"}
+// }) // JSON parser
 
 // Connect Database
 connectDB();
 
 // Routes
+app.use("/api/users", require("./routes/reg"));
 app.use("/api/transactions", require("./routes/transactionRoutes"));
 
 const PORT = process.env.PORT || 5000;

@@ -34,6 +34,10 @@ router.post('/register', async (req, res,next) => {
     }
   }
 );
+router.get("/", async (req, res) => {
+  
+    res.status(200).json({ message: "server is running" });
+});
 
 
 
