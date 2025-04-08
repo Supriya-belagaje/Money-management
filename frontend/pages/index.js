@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,15 +8,16 @@ import * as Yup from "yup";
 
 export default function Home() {
   const router = useRouter();
-
+  const [isLogin, setIsLogin] = useState(true); // manage toggle state
+  
   // Login form validation
   const loginSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().required("Required"),
   });
 
-  // Register form validation
-  const registerSchema = Yup.object({
+// Register form validation
+const registerSchema = Yup.object({
     fullName: Yup.string().required("Full name is required"),
     email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().min(6, "Min 6 characters").required("Required"),
@@ -28,20 +29,15 @@ export default function Home() {
   // On login submit
   const handleLogin = (values, { setSubmitting }) => {
     console.log("Login Data:", values);
-    // redirect only after validation passes
-    setTimeout(() => {
-      router.push("/dashboard");
-      setSubmitting(false);
-    }, 500);
+    router.push("/dashboard");
+    setSubmitting(false);
   };
 
   // On register submit
   const handleRegister = (values, { setSubmitting }) => {
     console.log("Register Data:", values);
-    setTimeout(() => {
-      router.push("/dashboard");
-      setSubmitting(false);
-    }, 500);
+    router.push("/dashboard");
+    setSubmitting(false);
   };
 
   return (
@@ -51,24 +47,9 @@ export default function Home() {
           <h1 className="text-3xl font-extrabold text-center text-indigo-600 mb-2">💰 Money Manager</h1>
           <p className="text-sm text-center text-gray-500 mb-6">Track and control your spending smartly.</p>
 
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid grid-cols-2 bg-gray-100 p-1 rounded mb-6">
-              <TabsTrigger
-                value="login"
-                className="bg-transparent text-black data-[state=active]:bg-indigo-500 data-[state=active]:text-black rounded"
-              >
-                Login
-              </TabsTrigger>
-              <TabsTrigger
-                value="register"
-                className="bg-transparent text-black data-[state=active]:bg-indigo-500 data-[state=active]:text-black rounded"
-              >
-                Register
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Login Form */}
-            <TabsContent value="login">
+          {isLogin ? (
+            <>
+              {/* Login Form */}
               <Formik
                 initialValues={{ email: "", password: "" }}
                 validationSchema={loginSchema}
@@ -102,10 +83,17 @@ export default function Home() {
                   </Form>
                 )}
               </Formik>
-            </TabsContent>
 
-            {/* Register Form */}
-            <TabsContent value="register">
+              <p className="text-sm text-center mt-4 text-gray-600">
+                Don't have an account?{" "}
+                <button onClick={() => setIsLogin(false)} className="text-indigo-600 font-medium hover:underline">
+                  Sign up
+                </button>
+              </p>
+            </>
+          ) : (
+            <>
+              {/* Register Form */}
               <Formik
                 initialValues={{ fullName: "", email: "", password: "", confirmPassword: "" }}
                 validationSchema={registerSchema}
@@ -159,8 +147,15 @@ export default function Home() {
                   </Form>
                 )}
               </Formik>
-            </TabsContent>
-          </Tabs>
+
+              <p className="text-sm text-center mt-4 text-gray-600">
+                Already have an account?{" "}
+                <button onClick={() => setIsLogin(true)} className="text-indigo-600 font-medium hover:underline">
+                  Login
+                </button>
+              </p>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
