@@ -1,7 +1,7 @@
 const express = require('express');
 const router=express.Router();
 const bcrypt = require('bcrypt'); 
-const User= require('/home/venkatesh/Documents/project/money/backend/models/user');
+const User= require('../models/user');
 const registerValidation = require("../validation/user");
 
 router.post('/register', async (req, res,next) => {
@@ -9,8 +9,8 @@ router.post('/register', async (req, res,next) => {
     const { error } = registerValidation.validate(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
-    const { name, password, email } = req.body;
-    if (!name || !email || !password) {
+    const { fullName, password, email } = req.body;
+    if (!fullName || !email || !password) {
         return res.status(400).json({ message: 'All fields are required' });
       }
   
@@ -20,7 +20,7 @@ router.post('/register', async (req, res,next) => {
   
       // Save to DB
       const newUser = new User({
-        name,
+        fullName,
         email,
         password: hashedPassword
       });

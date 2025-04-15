@@ -31,7 +31,9 @@ const registerSchema = Yup.object({
 
   const handleRegister = async (values, { setSubmitting, resetForm }) => {
     try {
-      const data = await registerUser(values);
+      const { fullName, email, password } = values;
+      const body = { fullName, email, password };
+      const data = await registerUser(body);
       toast.success(data.message || "Registered successfully!");
       resetForm();
       router.push("/dashboard");
@@ -48,12 +50,12 @@ const registerSchema = Yup.object({
       toast.success(data.message || "Logged in successfully!");
       router.push("/dashboard");
     } catch (err) {
-      console.error(err);
+      console.error('Login error:', err); // Log the entire error object
       toast.error(err.response?.data?.message || "Login failed!");
     } finally {
       setSubmitting(false);
     }
-  };
+  };  
   
 
   return (
@@ -96,6 +98,9 @@ const registerSchema = Yup.object({
                     <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={isSubmitting}>
                       Login
                     </Button>
+                    <p className="text-xs text-right text-indigo-600 hover:underline cursor-pointer">
+                        Forgot Password?
+                  </p>
                   </Form>
                 )}
               </Formik>
