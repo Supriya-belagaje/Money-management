@@ -31,7 +31,9 @@ const registerSchema = Yup.object({
 
   const handleRegister = async (values, { setSubmitting, resetForm }) => {
     try {
-      const data = await registerUser(values);
+      const { name, email, password } = values;
+      const body = { name, email, password };
+      const data = await registerUser(body);
       toast.success(data.message || "Registered successfully!");
       resetForm();
       router.push("/dashboard");
