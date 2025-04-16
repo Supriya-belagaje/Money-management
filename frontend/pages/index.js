@@ -21,7 +21,7 @@ export default function Home() {
 
 // Register form validation
 const registerSchema = Yup.object({
-    fullName: Yup.string().required("Full name is required"),
+    name: Yup.string().required("Full name is required"),
     email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().min(6, "Min 6 characters").required("Required"),
     confirmPassword: Yup.string()
@@ -111,7 +111,7 @@ const registerSchema = Yup.object({
             <>
               {/* Register Form */}
               <Formik
-                initialValues={{ fullName: "", email: "", password: "", confirmPassword: "" }}
+                initialValues={{ name: "", email: "", password: "", confirmPassword: "" }}
                 validationSchema={registerSchema}
                 onSubmit={handleRegister}
               >
@@ -120,12 +120,12 @@ const registerSchema = Yup.object({
                     <div>
                       <Field
                         as={Input}
-                        name="fullName"
+                        name="name"
                         type="text"
                         placeholder="Full Name"
                         className="focus:ring-indigo-400"
                       />
-                      <ErrorMessage name="fullName" component="div" className="text-red-500 text-xs mt-1" />
+                      <ErrorMessage name="name" component="div" className="text-red-500 text-xs mt-1" />
                     </div>
                     <div>
                       <Field
