@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,19 +8,24 @@ import * as Yup from "yup";
 import { loginUser, registerUser } from "@/service/auth";
 import { toast } from "react-toastify";
 
-
 export default function Home() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true); // manage toggle state
-  
-  // Login form validation
+  const [isLogin, setIsLogin] = useState(true);
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, []);
+
   const loginSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().required("Required"),
   });
 
-// Register form validation
-const registerSchema = Yup.object({
+  const registerSchema = Yup.object({
     name: Yup.string().required("Full name is required"),
     email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().min(6, "Min 6 characters").required("Required"),
@@ -43,10 +48,16 @@ const registerSchema = Yup.object({
       setSubmitting(false);
     }
   };
-  
+
   const handleLogin = async (values, { setSubmitting }) => {
     try {
       const data = await loginUser(values);
+
+      // Save token to localStorage
+      if (data.token) {
+        localStorage.setItem("authToken", data.token);
+      }
+
       toast.success(data.message || "Logged in successfully!");
       router.push("/dashboard");
     } catch (err) {
@@ -56,7 +67,6 @@ const registerSchema = Yup.object({
       setSubmitting(false);
     }
   };
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 p-4">
