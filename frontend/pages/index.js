@@ -50,7 +50,7 @@ const registerSchema = Yup.object({
       toast.success(data.message || "Logged in successfully!");
       router.push("/dashboard");
     } catch (err) {
-      console.error('Login error:', err); // Log the entire error object
+      // console.error('Login error:', err); // Log the entire error object
       toast.error(err.response?.data?.message || "Login failed!");
     } finally {
       setSubmitting(false);
