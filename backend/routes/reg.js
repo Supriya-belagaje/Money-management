@@ -1,7 +1,7 @@
 const express = require('express');
 const router=express.Router();
 const bcrypt = require('bcrypt'); 
-const User= require('/home/venkatesh/Documents/project/money/backend/models/user');
+const User= require('../models/user');
 const registerValidation = require("../validation/user");
 
 router.post('/register', async (req, res,next) => {

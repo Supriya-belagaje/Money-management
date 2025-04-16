@@ -1,6 +1,6 @@
 const express = require('express');
 const Router = express.Router();
-const User = require('/home/venkatesh/Documents/project/MM/money/backend/models/user');
+const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const loginValidation = require('../validation/login');
 const generateToken = require('../utils/generateToken');
