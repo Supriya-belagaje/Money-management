@@ -16,7 +16,7 @@ app.use('/api',loginroute);
 connectDB();
 
 // Routes
-app.use("/api/transactions", require("./routes/transactionRoutes"));
+app.use("/api", require("./routes/transactionRoutes"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT} 🚀`));
